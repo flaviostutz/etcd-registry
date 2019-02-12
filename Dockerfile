@@ -8,14 +8,19 @@ RUN go get -v github.com/flaviostutz/etcd-registry/etcd-registry
 ADD /main.dep $GOPATH/src/etcd-registrar/main.go
 RUN go get -v etcd-registrar
 
+ADD /main.dep $GOPATH/src/etcd-watcher/main.go
+RUN go get -v etcd-watcher
+
 #now build source code
-ADD etcd-registry $GOPATH/src/github.com/flaviostutz/etcd-registry/
+ADD /etcd-registry $GOPATH/src/github.com/flaviostutz/etcd-registry/etcd-registry
 RUN go get -v github.com/flaviostutz/etcd-registry/etcd-registry
 #RUN go test -v etcd-registry
 
-# ADD /etcd-registrar $GOPATH/src/
-ADD /etcd-registrar/main.go $GOPATH/src/etcd-registrar/main.go
+ADD /etcd-registrar $GOPATH/src/etcd-registrar
 RUN go get -v etcd-registrar
+
+ADD /etcd-watcher $GOPATH/src/etcd-watcher
+RUN go get -v etcd-watcher
 
 
 

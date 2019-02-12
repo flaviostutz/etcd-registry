@@ -16,10 +16,16 @@ services:
       - TTL=60
       - INFO=
 
+  etcd-watcher:
+    build: .
+    environment:
+      - LOG_LEVEL=debug
+      - ETCD_URL=http://etcd0:2379
+      - ETCD_BASE=/webservers
+      - SERVICE=test1
+
   etcd0:
     image: quay.io/coreos/etcd:v3.2.25
     environment:
       - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
       - ETCD_ADVERTISE_CLIENT_URLS=http://etcd0:2379
-    # ports:
-    #   - 2379:2379

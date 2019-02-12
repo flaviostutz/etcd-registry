@@ -1,8 +1,6 @@
 package main
 
 import (
-	"context"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"strings"
@@ -17,17 +15,11 @@ func main() {
 	etcdURL0 := flag.String("etcd-url", "", "ETCD URLs. ex: http://etcd0:2379")
 	etcdBase0 := flag.String("etcd-base", "/services", "Base ETCD path. Defaults to '/services'")
 	service0 := flag.String("service", "", "Service name. Ex: ServiceA")
-	name0 := flag.String("name", "", "Node name. Maybe an IP or a custom name. Ex.: node345")
-	info0 := flag.String("info", "", "Additional node info in json format")
-	ttl0 := flag.Int("ttl", 60, "Time to Live. The daemon will keep updating the node's lease until it is killed")
 	flag.Parse()
 
 	etcdURL := *etcdURL0
 	etcdBase := *etcdBase0
 	service := *service0
-	name := *name0
-	ttl := *ttl0
-	info := *info0
 
 	if etcdURL == "" {
 		showUsage()
@@ -37,12 +29,8 @@ func main() {
 		showUsage()
 		panic("--service should be defined")
 	}
-	if name == "" {
-		showUsage()
-		panic("--name should be defined")
-	}
 
-	logrus.Infof("Registering service node at /%s/%s/%s [service=%s, name=%s, ttl=%d, info=%s]. etcdUrl=%s", etcdBase, service, name, service, name, ttl, info, etcdURL)
+	logrus.Infof("Watching service /%s/%s. etcdUrl=%s", etcdBase, service, etcdURL)
 
 	switch *logLevel {
 	case "debug":
@@ -64,23 +52,15 @@ func main() {
 		panic(err)
 	}
 
-	node := etcdregistry.Node{}
-	node.Name = name
-	infom := make(map[string]string, 0)
-	if info != "" {
-		err = json.Unmarshal([]byte(info), &infom)
+	for {
+		logrus.Debugf("Getting service nodes...")
+		nodes, err := reg.GetServiceNodes(service)
+		logrus.Debugf("%s %s", nodes, err)
 		if err != nil {
-			logrus.Errorf("Could not parse 'info' as json content. err=%s", err)
 			panic(err)
 		}
-	}
-	node.Info = infom
-	c, err := reg.RegisterNode(context.TODO(), service, node, 20*time.Second)
-	if err != nil {
-		panic(err)
-	}
-	for m := range c {
-		logrus.Infof(">>> %v", m)
+		fmt.Sprintf("Nodes: %v", nodes)
+		time.Sleep(2 * time.Second)
 	}
 
 }

@@ -25,8 +25,8 @@ type EtcdRegistry struct {
 
 //Node registered service node
 type Node struct {
-	name string
-	info map[string]string
+	Name string
+	Info map[string]string
 }
 
 //NewEtcdRegistry EtcdRegistry factory method
@@ -46,21 +46,18 @@ func NewEtcdRegistry(etcdEndpoints []string, etcdBasePath string, defaultTimeout
 }
 
 //RegisterNode registers a new Node to a service with a TTL. After registration, TTL lease will be kept alive until node is unregistered or process killed
-func (r *EtcdRegistry) RegisterNode(ctx context.Context, serviceName string, node *Node, ttl time.Duration) (<-chan *clientv3.LeaseKeepAliveResponse, error) {
+func (r *EtcdRegistry) RegisterNode(ctx context.Context, serviceName string, node Node, ttl time.Duration) (<-chan *clientv3.LeaseKeepAliveResponse, error) {
 	if serviceName == "" {
 		return nil, fmt.Errorf("service name must be non empty")
 	}
-	if node == nil {
-		return nil, fmt.Errorf("node must be defined")
-	}
-	if node.name == "" {
-		return nil, fmt.Errorf("node.name must be non empty")
+	if node.Name == "" {
+		return nil, fmt.Errorf("node.Name must be non empty")
 	}
 	if ttl.Seconds() <= 0 {
 		return nil, fmt.Errorf("ttl must be > 0")
 	}
 
-	logrus.Debugf("Creating lease grant for %s/%s", serviceName, node.name)
+	logrus.Debugf("Creating lease grant for %s/%s", serviceName, node.Name)
 	ctx0, cancel := context.WithTimeout(context.Background(), r.defaultTimeout)
 	defer cancel()
 	lgr, err := r.client.Grant(ctx0, int64(ttl.Seconds()))
@@ -68,15 +65,15 @@ func (r *EtcdRegistry) RegisterNode(ctx context.Context, serviceName string, nod
 		return nil, err
 	}
 
-	logrus.Debugf("Creating node attribute for %s/%s", serviceName, node.name)
+	logrus.Debugf("Creating node attribute for %s/%s", serviceName, node.Name)
 	ctx0, cancel = context.WithTimeout(context.Background(), r.defaultTimeout)
 	defer cancel()
-	_, err = r.client.Put(ctx0, r.nodePath(serviceName, node.name), encode(node.info), clientv3.WithLease(lgr.ID))
+	_, err = r.client.Put(ctx0, r.nodePath(serviceName, node.Name), encode(node.Info), clientv3.WithLease(lgr.ID))
 	if err != nil {
 		return nil, err
 	}
 
-	logrus.Debugf("Starting automatic keep alive for %s/%s", serviceName, node.name)
+	logrus.Debugf("Starting automatic keep alive for %s/%s", serviceName, node.Name)
 	c, err := r.client.KeepAlive(ctx, lgr.ID)
 	if err != nil {
 		return nil, err
@@ -103,8 +100,8 @@ func (r *EtcdRegistry) GetServiceNodes(serviceName string) ([]Node, error) {
 
 	for _, n := range rsp.Kvs {
 		node := Node{}
-		node.name = string(n.Key)
-		node.info = decode(n.Value)
+		node.Name = string(n.Key)
+		node.Info = decode(n.Value)
 		nodes = append(nodes, node)
 	}
 
