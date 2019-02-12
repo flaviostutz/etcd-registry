@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"strings"
 	"time"
 
+	"github.com/flaviostutz/etcd-registry/etcd-registry"
 	"github.com/sirupsen/logrus"
 )
 
@@ -60,6 +62,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	node := etcdregistry.Node{}
+	reg.RegisterNode(context.TODO, service, node, 20*time.Second)
 
 }
 

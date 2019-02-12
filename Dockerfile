@@ -2,7 +2,7 @@ FROM golang:1.10 AS BUILD
 
 #doing dependency build separated from source build optimizes time for developer, but is not required
 #install external dependencies first
-ADD /main.dep $GOPATH/src/github.com/flaviostutz/etcd-registry/etcd-registry/etcdregistry.go
+ADD /etcdregistry.dep $GOPATH/src/github.com/flaviostutz/etcd-registry/etcd-registry/etcdregistry.go
 RUN go get -v github.com/flaviostutz/etcd-registry/etcd-registry
 
 ADD /main.dep $GOPATH/src/etcd-registrar/main.go
@@ -13,7 +13,8 @@ ADD etcd-registry $GOPATH/src/github.com/flaviostutz/etcd-registry/
 RUN go get -v github.com/flaviostutz/etcd-registry/etcd-registry
 #RUN go test -v etcd-registry
 
-ADD etcd-registrar $GOPATH/src/etcd-registrar
+# ADD /etcd-registrar $GOPATH/src/
+ADD /etcd-registrar/main.go $GOPATH/src/etcd-registrar/main.go
 RUN go get -v etcd-registrar
 
 

@@ -1,8 +1,9 @@
-package main
+package etcdregistry
 
 import (
 	"fmt"
 
+	_ "go.etcd.io/etcd/clientv3"
 	_ "github.com/sirupsen/logrus"
 )
 
