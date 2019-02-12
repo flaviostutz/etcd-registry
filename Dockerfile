@@ -5,22 +5,16 @@ FROM golang:1.10 AS BUILD
 ADD /etcdregistry.dep $GOPATH/src/github.com/flaviostutz/etcd-registry/etcd-registry/etcdregistry.go
 RUN go get -v github.com/flaviostutz/etcd-registry/etcd-registry
 
-ADD /main.dep $GOPATH/src/etcd-registrar/main.go
-RUN go get -v etcd-registrar
-
-ADD /main.dep $GOPATH/src/etcd-watcher/main.go
-RUN go get -v etcd-watcher
+ADD /main.dep $GOPATH/src/sample/main.go
+RUN go get -v sample
 
 #now build source code
 ADD /etcd-registry $GOPATH/src/github.com/flaviostutz/etcd-registry/etcd-registry
 RUN go get -v github.com/flaviostutz/etcd-registry/etcd-registry
 #RUN go test -v etcd-registry
 
-ADD /etcd-registrar $GOPATH/src/etcd-registrar
-RUN go get -v etcd-registrar
-
-ADD /etcd-watcher $GOPATH/src/etcd-watcher
-RUN go get -v etcd-watcher
+ADD /sample $GOPATH/src/sample
+RUN go get -v sample
 
 
 
