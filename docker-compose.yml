@@ -11,3 +11,9 @@ services:
       - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
       - ETCD_ADVERTISE_CLIENT_URLS=http://etcd0:2379
 
+  etcd3-lucas:
+    image: registry.cn-hangzhou.aliyuncs.com/ringtail/lucas:0.0.1
+    ports:
+      - 8888:8080
+    environment:
+      - ENDPOINTS=http://etcd0:2379

@@ -20,10 +20,6 @@ func main() {
 
 	ctx := context.TODO()
 	go registerNode(ctx, reg, "test", randomString(5))
-	go registerNode(ctx, reg, "test", randomString(5))
-	go registerNode(ctx, reg, "test", randomString(5))
-	go registerNode(ctx, reg, "test", randomString(5))
-	go registerNode(ctx, reg, "test", randomString(5))
 	go watchService(reg, "test")
 
 	logrus.Infof("Running...")
