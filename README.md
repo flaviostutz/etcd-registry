@@ -4,6 +4,8 @@ On each service node that is launched, register itself using this library so tha
 After registration, another client can discover which nodes are available and connect to them if desired.
 You must define a TTL for the registration so that if the node goes down after a while, the registration key in ETCD gets vanished and all watchers can know it is no longer available. The TTL keep alive is performed automatically by the library
 
+If you need a standalone application for registration, see https://github.com/flaviostutz/etcd-registrar
+
 # Usage
 
 1. To register a running Node:
