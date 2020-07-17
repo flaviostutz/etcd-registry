@@ -58,7 +58,7 @@ func (r *EtcdRegistry) keepRegistered(ctx context.Context, serviceName string, n
 			time.Sleep(5 * time.Second)
 			continue
 		}
-		logrus.Infof("Registration on ETCD Done. Retrying.")
+		logrus.Infof("Registration on ETCD done. Retrying.")
 		time.Sleep(10 * time.Second)
 	}
 }
