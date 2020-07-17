@@ -58,7 +58,7 @@ func (r *EtcdRegistry) keepRegistered(ctx context.Context, serviceName string, n
 			time.Sleep(5 * time.Second)
 		} else {
 			logrus.Infof("Registration stopped with no errors")
-			return
+			time.Sleep(10 * time.Second)
 		}
 	}
 }
