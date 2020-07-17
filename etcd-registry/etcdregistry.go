@@ -54,12 +54,12 @@ func (r *EtcdRegistry) keepRegistered(ctx context.Context, serviceName string, n
 	for {
 		err := r.registerNode(ctx, serviceName, node, ttl)
 		if err != nil {
-			logrus.Warnf("Registration got errors. Restarting. err=%s", err)
+			logrus.Warnf("Registration stopped. Retrying. err=%s", err)
 			time.Sleep(5 * time.Second)
-		} else {
-			logrus.Infof("Registration stopped with no errors")
-			return
+			continue
 		}
+		logrus.Infof("Registration on ETCD done. Retrying.")
+		time.Sleep(10 * time.Second)
 	}
 }
 
