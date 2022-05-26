@@ -15,6 +15,8 @@ import (
 //EtcdRegistry lib
 type EtcdRegistry struct {
 	etcdBasePath   string
+	etcdUsername   string
+	etcdPassword   string
 	etcdEndpoints  []string
 	defaultTimeout time.Duration
 }
@@ -26,11 +28,13 @@ type Node struct {
 }
 
 //NewEtcdRegistry EtcdRegistry factory method
-func NewEtcdRegistry(etcdEndpoints []string, etcdBasePath string, defaultTimeout time.Duration) (*EtcdRegistry, error) {
+func NewEtcdRegistry(etcdEndpoints []string, etcdBasePath string, etcdUsername string, etcdPassword string, defaultTimeout time.Duration) (*EtcdRegistry, error) {
 	r := &EtcdRegistry{}
 	r.defaultTimeout = defaultTimeout
 	r.etcdBasePath = etcdBasePath
 	r.etcdEndpoints = etcdEndpoints
+	r.etcdUsername = etcdUsername
+	r.etcdPassword = etcdPassword
 	return r, nil
 }
 
@@ -130,7 +134,7 @@ func (r *EtcdRegistry) GetServiceNodes(serviceName string) ([]Node, error) {
 
 func (r *EtcdRegistry) initializeETCDClient() (*clientv3.Client, error) {
 	logrus.Debugf("Initializing ETCD client")
-	cli, err := clientv3.New(clientv3.Config{Endpoints: r.etcdEndpoints, DialTimeout: r.defaultTimeout})
+	cli, err := clientv3.New(clientv3.Config{Endpoints: r.etcdEndpoints, Username: r.etcdUsername, Password: r.etcdPassword, DialTimeout: r.defaultTimeout})
 	if err != nil {
 		logrus.Errorf("Could not initialize ETCD client. err=%s", err)
 		return nil, err
